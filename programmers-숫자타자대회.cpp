@@ -1,9 +1,18 @@
 #include <string>
+#include <stack>
 #include <algorithm>
+#include <cstring>
 
 #include <iostream>
 
 using namespace std;
+
+struct s_node{
+    int index;
+    int left;
+    int right;
+    int weight;
+};
 
 int arr[10][10] = {
     {1, 7, 6, 7, 5, 4, 5, 3, 2, 3},//0
@@ -18,79 +27,82 @@ int arr[10][10] = {
     {3, 6, 5, 4, 5, 3, 2, 4, 2, 1},//9
 };
 
-int maxValue = 0;
+int dp[10][10][2][10];
+
+stack<s_node> s;
+int maxValue = -1;
 int maxIndex = 0;
 
 void re(string str, int i, int left, int right, int w){
-    // if (i == maxIndex){
-    //     if (maxValue == -1 || maxValue > w)
-    //         maxValue = w;
-    //     return ;
-    // }
+//     if (i == maxIndex){
+//         if (maxValue == -1 || maxValue > w)
+//             maxValue = w;
+//         return ;
+//     }
+//     else if (maxValue != -1 && maxValue <= w)
+//         return ;
 
-    // int target = str[i] - '0';
-    // if (target == left){
-    //     re(str, i + 1, target, right, w + arr[left][target]);
-    // }
-    // else if (target == right){
-    //     re(str, i + 1, left, target, w + arr[right][target]);
-    // }
-    // else{
-    //     re(str, i + 1, target, right, w + arr[left][target]);
-    //     re(str, i + 1, left, target, w + arr[right][target]);
-    // }
-     cout << "len : " << str.length() << endl;
-    int size = str.length();
-    bool isOK = true;
-    for(int i = 0 ; i <= size; i++){
-        int target = str[i] - '0';
-        int fromLeft = arr[left][target];
-        int fromRight = arr[right][target];
+//     int target = str[i] - '0';
+//     if (target == left){
+//         re(str, i + 1, target, right, w + arr[left][target]);
+//     }
+//     else if (target == right){
+//         re(str, i + 1, left, target, w + arr[right][target]);
+//     }
+//     else{
+//         re(str, i + 1, target, right, w + arr[left][target]);
+//         re(str, i + 1, left, target, w + arr[right][target]);
+//     }
 
-        if (i == size)
-            break;
+//     s_node init;
+//     init.index = 0;
+//     init.left = 4;
+//     init.right = 6;
+//     init.weight = 0;
+//     s.push(init);
+//     while(!s.empty()){
+//         s_node node = s.top();
+//         s.pop();
 
-        if (target == left || target == right){
-            maxValue += 1;
-            continue;
-        }
 
-        else if (isOK &&  fromLeft == fromRight){
-            int k = 1;
-            while(1){
-                if (i == size){
-                    isOK = false;
-                    break;
-                }
-                int newtarget = str[i + k] - '0';
-                int newLeft = arr[left][newtarget];
-                int newRight = arr[right][newtarget];
-                if (newLeft == newRight){
-                    k++;
-                    continue;
-                }
-                else if (newLeft < newRight)
-                    fromLeft +=1;
-                else if (newLeft > newRight)
-                    fromRight +=1;
-                break;
-            }
-        }
+//         if (node.index == maxIndex){
+//             if (maxValue == -1 || node.weight < maxValue)
+//                 maxValue = node.weight;
+//             continue;
+//         }
+//         else if (maxValue != -1 && node.weight >= maxValue)
+//             continue;
 
-        if (fromLeft < fromRight){
-            left = target;
-            maxValue += fromLeft;
-        }
-        else{
-            right = target;
-            maxValue += fromRight;
-        }
-    }
+//         int target = str[node.index] - '0';
+//         if (target == node.left || target == node.right){
+//             s_node newNode = node;
+//             newNode.index += 1;
+//             newNode.weight += 1;
+//             s.push(newNode);
+//         }
+//         else{
+//             s_node leftNode = node;
+//             leftNode.weight += arr[node.left][target];
+//             leftNode.left = target;
+//             leftNode.index += 1;
+//             s.push(leftNode);
+
+//             s_node rightNode = node;
+//             rightNode.weight += arr[node.right][target];
+//             rightNode.right = target;
+//             rightNode.index += 1;
+//             s.push(rightNode);
+//         }
+//     }
+
+
+
 }
 
 int solution(string numbers) {
     int left = 4, right = 6;
     maxIndex = numbers.length();
+    memset(dp, 0, sizeof(dp));
 
     re(numbers, 0, left, right, 0);
 
