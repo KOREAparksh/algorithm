@@ -2,46 +2,57 @@
 #include <vector>
 #include <stack>
 
+#define MAX_INDEX 201
+#define NOT_LINKED 0
+
 using namespace std;
 
-vector<int> vec[201];
-bool visit[201];
+bool visit[MAX_INDEX];
+stack<int> linkedVertexStack;
 
-int solution(int n, vector<vector<int>> computers) {
-    int answer = 0;
-    
-    for(int nodeNumber = 1; nodeNumber <= n; nodeNumber++){
-        if (visit[nodeNumber] == true){
+bool isLinked(int linkedInfo){
+    if (linkedInfo == NOT_LINKED)
+        return false;
+    return true;
+}
+
+void findLinkedVertex(int &vertexSize, vector<vector<int>> &computers){
+    int starting = linkedVertexStack.top();
+    linkedVertexStack.pop();
+    visit[starting] = true;
+    computers[starting - 1][starting - 1] = NOT_LINKED;
+
+    for(int destination = 1; destination <= vertexSize; destination++){
+        if (isLinked(computers[starting - 1][destination - 1]) == false)
+            continue;
+        if (starting == destination){
             continue;
         }
-        stack<int> stack;
-        stack.push(nodeNumber);
-        
-        while(!stack.empty()){
-            int linkedNumber = stack.top();
-            stack.pop();
-            visit[linkedNumber] = true;
-            computers[linkedNumber - 1][linkedNumber - 1] = 0;
-            
-            for(int destination = 1; destination <= n; destination++){
-                if (computers[linkedNumber - 1][destination - 1] == 0)
-                    continue;
-
-                if (linkedNumber == destination){
-                    continue;
-                }
-
-                if (visit[destination] == true){
-                    continue;
-                }
-                computers[linkedNumber - 1][destination - 1] = 0;
-                computers[destination - 1][linkedNumber - 1] = 0;
-                visit[destination] = true;
-                stack.push(destination);
-            }
+        if (visit[destination] == true){
+            continue;
         }
-        answer++;
+        computers[starting - 1][destination - 1] = NOT_LINKED;
+        computers[destination - 1][starting - 1] = NOT_LINKED;
+        visit[destination] = true;
+        linkedVertexStack.push(destination);
     }
-    
-    return answer;
+}
+
+void visitLinkedVertex(int vertexSize, vector<vector<int>> computers){
+    while(!linkedVertexStack.empty()){
+        findLinkedVertex(vertexSize, computers);
+    }
+}
+
+int solution(int n, vector<vector<int>> computers) {
+    int networkCount = 0;
+
+    for(int beginVertexNumber = 1; beginVertexNumber <= n; beginVertexNumber++){
+        if (visit[beginVertexNumber] == true) continue;
+        linkedVertexStack.push(beginVertexNumber);
+        visitLinkedVertex(n, computers);
+        networkCount++;
+    }
+
+    return networkCount;
 }
