@@ -14,16 +14,16 @@ int solution(vector<int> priorities, int location) {
     int size = priorities.size();
     priority_queue<int> pq;
     queue<s_node> q;
-    
+
     for(int i = 0 ; i < size; i++){\
         q.push({i, priorities[i]});
         pq.push(priorities[i]);
     }
-    
+
     while(1){
         s_node front = q.front();
         q.pop();
-        
+
         if (front.value == pq.top()){
             answer++;
             pq.pop();
@@ -34,6 +34,6 @@ int solution(vector<int> priorities, int location) {
             q.push(front);
         }
     }
-    
+
     return answer;
 }
