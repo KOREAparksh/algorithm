@@ -80,7 +80,9 @@ int main(int argc, char* argv[]) {
                 answer += ",";
             }
         }
-        answer.pop_back();
+        if (answer.empty() == 0){
+            answer.pop_back();
+        }
         cout << "[" << answer << "]" << endl;
     }
 }
